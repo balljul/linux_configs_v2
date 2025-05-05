@@ -26,6 +26,10 @@ warn() {
     log 1 "${LOG_PREFIX} ${COLOR_BOLD_YELLOW}${SYMBOL_WARNING} $1${COLOR_RESET}"
 }
 
+warning() {
+    warn "$1"
+}
+
 error() {
     log 1 "${LOG_PREFIX} ${COLOR_BOLD_RED}${SYMBOL_ERROR} $1${COLOR_RESET}"
 }

@@ -1,0 +1,14 @@
+bspwm
+sxhkd
+polybar
+picom
+rofi
+dunst
+nitrogen
+i3lock
+redshift
+cmus
+ranger
+lightdm
+xfce4-terminal
+xorg

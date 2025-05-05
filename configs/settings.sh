@@ -8,6 +8,16 @@ export LOG_LEVEL=1                            # 0=quiet, 1=normal, 2=verbose, 3=
 export EXECUTION_TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 export LOG_FILE="${LOGS_DIR}/install_${EXECUTION_TIMESTAMP}.log"
 
+# Testing and safety settings
+export DRY_RUN=false                         # Whether to simulate but not make actual changes
+export SKIP_CONFIRMATION=false               # Whether to skip all confirmation prompts
+
+# System configuration
+export DEFAULT_USER="julius"                 # Default username 
+export DEFAULT_TIMEZONE="Europe/Berlin"      # Default timezone
+export DEFAULT_LOCALE="en_US.UTF-8"          # Default locale
+export DEFAULT_KEYBOARD="de"                 # Default keyboard layout
+
 # Base colors
 export COLOR_RED='\033[0;31m'          # Error messages
 export COLOR_LIGHT_RED='\033[1;31m'    # Critical errors

@@ -1,0 +1,9 @@
+build-essential
+git
+curl
+wget
+vim
+htop
+tmux
+unzip
+sudo

@@ -1,5 +1,57 @@
 #!/bin/bash
 
+# Process command line arguments
+show_help() {
+    echo "Linux Configs Installation Script"
+    echo
+    echo "Usage: $0 [OPTIONS]"
+    echo
+    echo "Options:"
+    echo "  -h, --help              Show this help message"
+    echo "  -d, --dry-run           Run in dry-run mode (simulate but don't make changes)"
+    echo "  -v, --verbose           Increase output verbosity"
+    echo "  -y, --yes               Skip all confirmation prompts"
+    echo "  -c, --continue-on-error Continue execution even if a module fails"
+    echo "  -m, --module NAME       Run only the specified module"
+    echo
+    exit 0
+}
+
+SELECTED_MODULE=""
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h|--help)
+            show_help
+            ;;
+        -d|--dry-run)
+            export DRY_RUN=true
+            shift
+            ;;
+        -v|--verbose)
+            export LOG_LEVEL=2
+            shift
+            ;;
+        -y|--yes)
+            export SKIP_CONFIRMATION=true
+            shift
+            ;;
+        -c|--continue-on-error)
+            export CONTINUE_ON_ERROR=true
+            shift
+            ;;
+        -m|--module)
+            SELECTED_MODULE="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            show_help
+            ;;
+    esac
+done
+
 # Source configuration files
 source "$(dirname "$0")/configs/paths.sh"
 source "$(dirname "$0")/configs/settings.sh"
@@ -41,6 +93,12 @@ log 1 "${COLOR_BOLD_BLUE}        LINUX SETUP CONFIGURATION SCRIPT${COLOR_RESET}"
 log 1 "═══════════════════════════════════════════════"
 log 1 "${COLOR_CYAN}${SYMBOL_INFO} Starting installation at $(date)${COLOR_RESET}"
 log 1 "${COLOR_WHITE}${SYMBOL_INFO} Log file: ${LOG_FILE}${COLOR_RESET}"
+
+# Display mode information
+if [[ "${DRY_RUN}" == "true" ]]; then
+    log 1 "${COLOR_BOLD_YELLOW}${SYMBOL_WARNING} Running in DRY-RUN mode - no changes will be made${COLOR_RESET}"
+fi
+
 log 1 ""
 
 # Find modules
@@ -48,7 +106,16 @@ log 2 "${COLOR_MAGENTA}${SYMBOL_ARROW} Scanning for modules in ${MODULES_DIR}${C
 log 2 "${COLOR_WHITE}  Pattern: ${MODULE_PREFIX_PATTERN}${COLOR_RESET}"
 log 2 "${COLOR_WHITE}  Entrypoint: ${ENTRYPOINT_FILENAME}${COLOR_RESET}"
 
-modules=($(find "${MODULES_DIR}" -maxdepth 1 -type d -name "${MODULE_PREFIX_PATTERN}" | sort))
+if [[ -n "${SELECTED_MODULE}" ]]; then
+    modules=($(find "${MODULES_DIR}" -maxdepth 1 -type d -name "*${SELECTED_MODULE}*" | sort))
+    if [ ${#modules[@]} -eq 0 ]; then
+        log 1 "${COLOR_BG_RED}${COLOR_BOLD_WHITE} ERROR ${COLOR_RESET} ${COLOR_BOLD_RED}Module '${SELECTED_MODULE}' not found in ${MODULES_DIR}${COLOR_RESET}"
+        exit 1
+    fi
+    log 1 "${COLOR_BOLD_BLUE}${SYMBOL_INFO} Running selected module: ${SELECTED_MODULE}${COLOR_RESET}"
+else
+    modules=($(find "${MODULES_DIR}" -maxdepth 1 -type d -name "${MODULE_PREFIX_PATTERN}" | sort))
+fi
 
 if [ ${#modules[@]} -eq 0 ]; then
     log 1 "${COLOR_BG_RED}${COLOR_BOLD_WHITE} ERROR ${COLOR_RESET} ${COLOR_BOLD_RED}No modules found in ${MODULES_DIR}${COLOR_RESET}"
@@ -98,7 +165,11 @@ done
 # Completion message
 log 1 ""
 log 1 "┌───────────────────────────────────────────────┐"
-log 1 "│ ${COLOR_BOLD_GREEN}INSTALLATION COMPLETED SUCCESSFULLY${COLOR_RESET}           │"
+if [[ "${DRY_RUN}" == "true" ]]; then
+    log 1 "│ ${COLOR_BOLD_YELLOW}DRY-RUN COMPLETED SUCCESSFULLY${COLOR_RESET}            │"
+else
+    log 1 "│ ${COLOR_BOLD_GREEN}INSTALLATION COMPLETED SUCCESSFULLY${COLOR_RESET}           │"
+fi
 log 1 "└───────────────────────────────────────────────┘"
 log 1 "${COLOR_WHITE}${SYMBOL_INFO} Finished at $(date)${COLOR_RESET}"
 log 1 "${COLOR_WHITE}${SYMBOL_INFO} Log saved to: ${LOG_FILE}${COLOR_RESET}"

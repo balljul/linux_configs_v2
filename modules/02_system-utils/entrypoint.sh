@@ -40,9 +40,7 @@ for script in "${MODULE_DIR}/scripts"/*.sh; do
 done
 
 cleanup() {
-    # Remove temporary files, restore backup configurations on failure, etc.
     verbose "Performing cleanup..."
-    # Add your cleanup code here
 }
 
 trap cleanup EXIT
@@ -53,7 +51,6 @@ trap cleanup EXIT
 main() {
     step "Starting module: ${MODULE_NAME}"
 
-    # Check prerequisites
     step "Checking prerequisites"
     if ! command_exists apt-get; then
         error "This script requires apt-get to be installed"
@@ -65,14 +62,9 @@ main() {
         return 1
     fi
 
-    # Prepare system dotfiles directories and import existing configs
     prepare_dotfiles
     import_old_configs
-
-    # Install system utilities from package list
     install_system_utils
-    
-    # Setup dotfiles for the installed utilities
     setup_dotfiles
 
     success "Module completed successfully: ${MODULE_NAME}"

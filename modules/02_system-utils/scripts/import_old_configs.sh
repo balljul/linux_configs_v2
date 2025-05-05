@@ -10,7 +10,6 @@ import_old_configs() {
         return 0
     fi
     
-    # Import neofetch configuration
     if [ -f "${old_configs_dir}/neofetch/config.conf" ]; then
         info "Found old neofetch configuration"
         mkdir -p "${SYSTEM_DIR}/dotfiles/neofetch"
@@ -18,7 +17,6 @@ import_old_configs() {
         success "Imported neofetch configuration"
     fi
     
-    # Check for btop configuration in your home directory
     if [ -f "${HOME}/.config/btop/btop.conf" ] && [ ! -f "${SYSTEM_DIR}/dotfiles/btop/btop.conf" ]; then
         info "Found existing btop configuration"
         mkdir -p "${SYSTEM_DIR}/dotfiles/btop"
@@ -26,7 +24,6 @@ import_old_configs() {
         success "Imported btop configuration"
     fi
     
-    # Check for tmux configuration
     if [ -f "${HOME}/.tmux.conf" ] && [ ! -f "${SYSTEM_DIR}/dotfiles/.tmux.conf" ]; then
         info "Found existing tmux configuration"
         cp "${HOME}/.tmux.conf" "${SYSTEM_DIR}/dotfiles/"

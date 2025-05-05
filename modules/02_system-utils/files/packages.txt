@@ -9,5 +9,6 @@ dnsutils
 curl
 wget
 zip
+gzip
 unzip
 tldr

@@ -3,11 +3,9 @@
 setup_dotfiles() {
     step "Setting up dotfiles for system utilities"
     
-    # Create directories if they don't exist
     ensure_dir "${HOME}/.config/btop"
     ensure_dir "${HOME}/.config/neofetch"
     
-    # Copy btop configuration
     if [ -f ~/.config/btop/btop.conf ]; then
         info "Copying existing btop configuration to system dotfiles"
         mkdir -p "${SYSTEM_DIR}/dotfiles/btop"
@@ -20,7 +18,6 @@ setup_dotfiles() {
         warn "No btop configuration found. Will use defaults."
     fi
     
-    # Copy neofetch configuration
     if [ -f ~/.config/neofetch/config.conf ]; then
         info "Copying existing neofetch configuration to system dotfiles"
         mkdir -p "${SYSTEM_DIR}/dotfiles/neofetch"
@@ -33,7 +30,6 @@ setup_dotfiles() {
         warn "No neofetch configuration found. Will use defaults."
     fi
     
-    # Handle tmux configuration if it exists
     if [ -f ~/.tmux.conf ]; then
         info "Copying existing tmux configuration to system dotfiles"
         cp ~/.tmux.conf "${SYSTEM_DIR}/dotfiles/"

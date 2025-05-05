@@ -32,6 +32,13 @@ for helper in "${HELPERS_DIR}"/*.sh; do
     fi
 done
 
+# Source all scripts in the module
+for script in "${MODULE_DIR}/scripts"/*.sh; do
+    if [ -f "$script" ]; then
+        source "$script"
+    fi
+done
+
 cleanup() {
     # Remove temporary files, restore backup configurations on failure, etc.
     verbose "Performing cleanup..."
@@ -52,19 +59,21 @@ main() {
         error "This script requires apt-get to be installed"
         return 1
     fi
+    
+    if [[ $EUID -ne 0 ]]; then
+        error "This script must be run as root or with sudo"
+        return 1
+    fi
 
-    # Your module implementation goes here
-    # Example: Install packages
-    step "Installing required packages"
-    # install_package "package-name"
+    # Prepare system dotfiles directories and import existing configs
+    prepare_dotfiles
+    import_old_configs
 
-    # Example: Configure system settings
-    step "Configuring system settings"
-    # create_symlink "${MODULE_DIR}/configs/some-config" "${HOME}/.config/some-config"
-
-    # Example: Run a system command
-    step "Applying system settings"
-    # sudo systemctl enable some-service
+    # Install system utilities from package list
+    install_system_utils
+    
+    # Setup dotfiles for the installed utilities
+    setup_dotfiles
 
     success "Module completed successfully: ${MODULE_NAME}"
     return 0

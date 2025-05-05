@@ -1,0 +1,13 @@
+btop
+neofetch
+htop
+ncdu
+ranger
+tmux
+net-tools
+dnsutils
+curl
+wget
+zip
+unzip
+tldr
